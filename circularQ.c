@@ -130,47 +130,61 @@ int isFull(QueueType *cQ) // 큐가 다 찼는지 확인하려면, rear가 front
 }
 
 /* complete the function */
-void enQueue(QueueType *cQ, element item)
+void enQueue(QueueType *cQ, element item) // 큐에 원소 추가하기.(맨 뒤)(push)
 {
-    return 0;
+    if (isFull(cQ))
+        return; // 이미 다 찼다면, 실행하지 않는다.
+    else
+    {
+        cQ->rear = (cQ->rear + 1) % MAX_QUEUE_SIZE; // rear를 1 더하여(최대 사이즈를 넘어가면 다시 0이 되고)
+                                                    // 들어올 원소의 자리를 마련한다.
+        cQ->queue[cQ->rear] = item;                 // 들어올 원소를 입력한다.
+    }
 }
 
 /* complete the function */
-void deQueue(QueueType *cQ, element *item)
+void deQueue(QueueType *cQ, element *item) // 큐에 원소 제거하기.(맨 앞)(pop)
 {
-    return 0;
+    if (isEmpty(cQ))
+        return; // 큐가 이미 비어 있다면, 실행하지 않는다.
+    else
+    {
+        cQ->front = (cQ->front + 1) % MAX_QUEUE_SIZE; // front를 1 더하여(최대 사이즈를 넘어가면 다시 0이 되고)
+                                                      // front가 가리키는 원소 다음부터 원소가 들어오게 한다.
+        *item = cQ->queue[cQ->front];                 // front가 가리키고 있는(원래 맨 앞이었던)원소를 item으로 POP한다.
+    }
 }
 
-void printQ(QueueType *cQ)
+void printQ(QueueType *cQ) // 큐 출력하기
 {
-    int i, first, last;
-
-    first = (cQ->front + 1) % MAX_QUEUE_SIZE;
-    last = (cQ->rear + 1) % MAX_QUEUE_SIZE;
+    int i, first, last;                       // 큐 출력에 필요한 자료형 3개.
+                                              // 시작점, 종료점, 출력하는 지점.
+    first = (cQ->front + 1) % MAX_QUEUE_SIZE; // 시작점은 front의 다음 원소부터.
+    last = (cQ->rear + 1) % MAX_QUEUE_SIZE;   // 종료점은 rear을 넘어가면 종료.
 
     printf("Circular Queue : [");
 
-    i = first;
-    while (i != last)
+    i = first;        // first부터 시작.
+    while (i != last) // last와 같아지면 종료한다.
     {
-        printf("%3c", cQ->queue[i]);
-        i = (i + 1) % MAX_QUEUE_SIZE;
+        printf("%3c", cQ->queue[i]);  // 하나씩 출력한다.
+        i = (i + 1) % MAX_QUEUE_SIZE; // i를 하나씩 늘려준다(너무 커지면 0으로 돌아가게).
     }
-    printf(" ]\n");
+    printf(" ]\n"); // 끝나면 닫아준다.
 }
 
-void debugQ(QueueType *cQ)
+void debugQ(QueueType *cQ) // 큐 상태 보기
 {
 
     printf("\n---DEBUG\n");
-    for (int i = 0; i < MAX_QUEUE_SIZE; i++)
+    for (int i = 0; i < MAX_QUEUE_SIZE; i++) // 0부터 3까지, 4개 확인함.
     {
-        if (i == cQ->front)
+        if (i == cQ->front) // front 지점이면,
         {
-            printf("  [%d] = front\n", i);
+            printf("  [%d] = front\n", i); // 이곳이 front라고 하고 계속 진행.
             continue;
         }
-        printf("  [%d] = %c\n", i, cQ->queue[i]);
+        printf("  [%d] = %c\n", i, cQ->queue[i]); // 그렇지 않으면, 그냥 원소 출력해줌.
     }
-    printf("front = %d, rear = %d\n", cQ->front, cQ->rear);
+    printf("front = %d, rear = %d\n", cQ->front, cQ->rear); // 큐의 확인이 끝나면, front와 rear의 상태를 출력함.
 }
