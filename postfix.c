@@ -48,6 +48,7 @@ int main()
     char command;
     do
     {
+        printf("\n[----- [hyaejun-mun] [2019015035] -----]\n");
         printf("----------------------------------------------------------------\n");
         printf(" Infix to Postfix, then Evaluation\n");
         printf("----------------------------------------------------------------\n");
