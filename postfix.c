@@ -180,7 +180,7 @@ void toPostfix()
         }
         else if (getPriority(*exp) == rparen) // 현재 문자가 )이면,
         {
-            while (x = postfixPop() != '(') // (가 올 때까지 pop을 반복하여면서,
+            while ((x = postfixPop()) != '(') // (가 올 때까지 pop을 반복하여면서,
             {
                 charCat(&x); // 나온 값들을 postfix 문자열에 추가한다.
             }
@@ -205,29 +205,64 @@ void toPostfix()
         charCat(&x);              // 그 값을 문자열에 추가해 준다.
     }
 }
-void debug()
+void debug() // 상태를 표시하는 함수이다.
 {
     printf("\n---DEBUG\n");
-    printf("infixExp = %s\n", infixExp);
-    printf("postExp = %s\n", postfixExp);
-    printf("eval result = %d\n", evalResult);
-    printf("postfixStack : ");
+    printf("infixExp = %s\n", infixExp);      // 중위 표기법으로 표현한다.
+    printf("postExp = %s\n", postfixExp);     // 후위 표기법으로 표현한다.
+    printf("eval result = %d\n", evalResult); // 계산 결과를 표시한다.
+    printf("postfixStack : ");                // 연산자들을 모아서 표기한다.
     for (int i = 0; i < MAX_STACK_SIZE; i++)
         printf("%c ", postfixStack[i]);
     printf("\n");
 }
-void reset()
+void reset() // 초기화를 하는 함수이다.
 {
-    infixExp[0] = '\0';
+    infixExp[0] = '\0'; // 첫 번째 원소를 \0으로 보면, 비었다고 간주한다.
     postfixExp[0] = '\0';
     for (int i = 0; i < MAX_STACK_SIZE; i++)
-        postfixStack[i] = '\0';
+        postfixStack[i] = '\0'; // 스택의 모든 원소들을 비워준다.
 
-    postfixStackTop = -1;
+    postfixStackTop = -1; // 각 스택들의 top들도 초기화해준다.
     evalStackTop = -1;
     evalResult = 0;
 }
 void evaluation()
 {
+    char *exp = postfixExp; // postfix 표기법으로 표현된 수식을 하나씩 이동하면서 확인한다.
+    evalStackTop = -1;
+    int oper1, oper2;
+    while (*exp != '\0') // postfixExp 스택의 끝까지 이동한다.
+    {
+        if (getToken(*exp) == operand) // 확인 중인 원소가 피연산자이면,
+        {
+            evalPush(*exp - '0'); // 그 값을 스택의 맨 뒤에 추가한다.
+        }                         // - 연산자를 통해, 문자를 숫자로 만들어 준다!
+        else                      // 연산자라면,
+        {
+            oper1 = evalPop();
+            oper2 = evalPop();
+            switch (*exp) // 연산자에 맞게,
+            {
+            case '+': // 스택 맨 끝, 맨 끝에서 2번째 원소를 더한다.
+                evalPush(oper1 + oper2);
+                break;
+            case '-': // 스택 맨 끝, 맨 끝에서 2번째 원소를 뺀다.
+                evalPush(oper1 - oper2);
+                break;
+            case '*': // 스택 맨 끝, 맨 끝에서 2번째 원소를 곱한다.
+                evalPush(oper1 * oper2);
+                break;
+            case '/': // 스택 맨 끝, 맨 끝에서 2번째 원소를 나눠준다.
+                evalPush(oper1 / oper2);
+                break;
+            default:
+                break;
+            }
+        }
+        printf("%d, %d, %d", oper1, oper2, postfixStackTop);
+        exp++;
+    }
+    evalResult = evalPop();
     /* postfixExp, evalStack을 이용한 계산 */
 }
