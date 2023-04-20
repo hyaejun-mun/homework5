@@ -260,7 +260,6 @@ void evaluation()
                 break;
             }
         }
-        printf("%d, %d, %d", oper1, oper2, postfixStackTop);
         exp++;
     }
     evalResult = evalPop();
